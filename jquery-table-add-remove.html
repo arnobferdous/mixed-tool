@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script src="js/jquery-3.2.0.min.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function(){
+            var counter = 0;
+            $("#btn").on("click", function(){
+                counter = $("#myTable tr").length;
+                var newRow = $("<tr>");
+                var cols = "";
+                cols += '<td><input type="text" name="name'+counter+'" placeholder="Product" /></td>';
+                cols += '<td><input type="number" name="price'+counter+'" placeholder="Price" /></td>';
+                cols += '<td><input type="button" class="dlt" value="Delete" /></td>';
+                newRow.append(cols);
+                if( counter == 3 ){
+                    $("#btn").attr('disabled', true).prop('value', 'You have reached your limit');
+                }
+                $('table.order-list').append(newRow);
+                counter++;
+            });
+
+            $("table.order-list").on("click", ".dlt", function(e){
+                $(this).closest("tr").remove();
+                CalculateGrandTotal();
+                counter--;
+                $("#btn").attr('disabled', false).prop('value', 'Add Row');
+            });
+
+            $("table.order-list").on("change", 'input[name^="price"]', function(){
+                CalculateGrandTotal();
+            });
+        });
+
+        function CalculateGrandTotal()
+        {
+            var gt = 0;
+            $('table.order-list').find('input[name^="price"]').each(function(){
+                gt += +$(this).val();
+            });
+            $('.tp').text(gt.toFixed(2));
+        }
+
+    </script>
+</head>
+<body>
+    <div id="mydiv">
+        <table id="myTable" class="order-list">
+            <tbody>
+                <tr>
+                    <td><input type="text" name="product" placeholder="Product" /></td>
+                    <td><input type="number" name="price" placeholder="Price" /></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <input type="button" id="btn" value="Add Row" /> Total price: $<span class="tp">0.00</span>
+</body>
+</html>
